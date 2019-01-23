@@ -1,7 +1,6 @@
 <?php
 
 require __DIR__ . '/../vendor/autoload.php';
-
 use Gitlab\Client;
 use Gitlab\Exception\RuntimeException;
 
@@ -124,6 +123,11 @@ $fetch_refs = function($project) use ($fetch_ref, $repos) {
     try {
         foreach (array_merge($repos->branches($project['id']), $repos->tags($project['id'])) as $ref) {
             foreach ($fetch_ref($project, $ref) as $version => $data) {
+                // duplicate branches that look like version numbers, so we can use both "dev-2.0 and 2.0"
+                if(substr($version,0,4) !== 'dev-' ){
+                    $datas['dev-'.$version] = $data;
+                    $datas['dev-'.$version]['version'] = 'dev-'.$version;
+                }
                 $datas[$version] = $data;
             }
         }

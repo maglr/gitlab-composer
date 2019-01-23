@@ -1,3 +1,4 @@
 /confs/static-repos.json
 /vendor
 /composer.lock
+/.idea
