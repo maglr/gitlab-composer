@@ -35,6 +35,7 @@ $confs = parse_ini_file($config_file);
 
 $client = Client::create($confs['endpoint']);
 $client->authenticate($confs['api_key'], Client::AUTH_URL_TOKEN);
+define('port',$confs['port']);
 
 $groups = $client->api('groups');
 $projects = $client->api('projects');
@@ -98,11 +99,19 @@ $fetch_ref = function($project, $ref) use ($fetch_composer) {
 
         if (($data = $fetch_composer($project, $ref['commit']['id'])) !== false) {
             $data['version'] = $version;
+            if(method == 'ssh' && port != ''){
+				$url = 'ssh://';
+				$url .= strstr( $project['ssh_url_to_repo'],':',true);
+				$url .= ':'.port.'/'.$project['path_with_namespace'];
+			}
             $data['source'] = [
-                'url'       => $project[method . '_url_to_repo'],
+                //'url'       => $project[method . '_url_to_repo'],
+                'url'       => $url,
                 'type'      => 'git',
                 'reference' => $ref['commit']['id'],
             ];
+            // git@git.bluedevelop.nl:whaly/whaly-cms-2018.git
+            // ssh://git@git.yourcompany.com:10022/appdir/appname
 
             $ref_cache[$ref_key] = [$version => $data];
         } else {
@@ -162,12 +171,14 @@ $load_data = function($project) use ($fetch_refs) {
     } elseif ($data = $fetch_refs($project)) {
         file_put_contents($file, json_encode($data));
         touch($file, $mtime);
+        @chmod(0777,$file);
 
         return $data;
     } else {
         $f = fopen($file, 'w');
         fclose($f);
         touch($file, $mtime);
+        @chmod(0777,$file);
 
         return false;
     }
@@ -248,6 +259,7 @@ if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
     ));
 
     file_put_contents($packages_file, $data);
+    @chmod(0777,$packages_file);
 }
 
 $outputFile($packages_file);
