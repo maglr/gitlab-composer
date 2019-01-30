@@ -100,8 +100,7 @@ $fetch_ref = function($project, $ref) use ($fetch_composer) {
         if (($data = $fetch_composer($project, $ref['commit']['id'])) !== false) {
             $data['version'] = $version;
             if(method == 'ssh' && port != ''){
-				$url = 'ssh://';
-				$url .= strstr( $project['ssh_url_to_repo'],':',true);
+				$url = 'ssh://'.strstr( $project['ssh_url_to_repo'],':',true);
 				$url .= ':'.port.'/'.$project['path_with_namespace'];
 			}
             $data['source'] = [
