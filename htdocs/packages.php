@@ -67,6 +67,10 @@ $fetch_composer = function($project, $ref) use ($repos, $allow_package_name_mism
 
         $composer = json_decode(base64_decode($c['content']), true);
 
+        if ((!empty($composer['type']) && $composer['type'] == 'project')) {
+            return false; // hide all projects
+        }
+
         if (empty($composer['name']) || (!$allow_package_name_mismatches && strcasecmp($composer['name'], $project['path_with_namespace']) !== 0)) {
             return false; // packages must have a name and must match
         }
