@@ -1,0 +1,17 @@
+<?php // file ".php_cs"
+
+use PhpCsFixer\Config;
+use Symfony\Component\Finder\Finder;
+
+$finder = Finder::create()
+    ->in(__DIR__.'/htdocs')
+    ->name('*.php')
+    ->ignoreDotFiles(true)
+    ->ignoreVCS(true);
+
+return Config::create()
+    ->setRules([
+        '@PSR2' => true,
+        'array_syntax' => ['syntax' => 'short'],
+    ])
+    ->setFinder($finder);
