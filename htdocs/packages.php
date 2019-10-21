@@ -65,9 +65,8 @@ if (!empty($confs['groups'])) {
         }
     }
 }
-
 // Regenerate packages_file is needed
-if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
+if (!file_exists($packages_file) || filemtime($packages_file) < $mtime || isset($_GET['force'])) {
     $packages = [];
     foreach ($all_projects as $project) {
         if (($package = load_data($project, $repos)) && ($package_name = get_package_name($project, $repos))) {
