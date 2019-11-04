@@ -29,7 +29,7 @@ if (isset($confs['method']) && in_array($confs['method'], $validMethods)) {
 }
 
 define('ALLOW_PACKAGE_NAME_MISMATCH', !empty($confs['allow_package_name_mismatch']));
-define('HiDE_PROJECTS', !empty($confs['hide_projects']));
+define('HIDE_PROJECTS', !empty($confs['hide_projects']));
 
 
 // Create api and do first api calls

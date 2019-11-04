@@ -41,7 +41,7 @@ function fetch_composer($project, $ref, $repos)
 
         $composer = json_decode(base64_decode($c['content']), true);
 
-        if ((!empty($composer['type']) && $composer['type'] == 'project') && HiDE_PROJECTS) {
+        if ((!empty($composer['type']) && $composer['type'] == 'project') && HIDE_PROJECTS) {
             return false; // hide all projects
         }
 
