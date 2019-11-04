@@ -79,7 +79,7 @@ function fetch_ref($project, $ref, $repos)
         if (($data = fetch_composer($project, $ref['commit']['id'], $repos)) !== false) {
             $data['version'] = $version;
             $url = $project[METHOD . '_url_to_repo'];
-            if (METHOD == 'ssh' && PORT != '') {
+            if (METHOD === 'ssh' && PORT !== '') {
                 $url = 'ssh://'.strstr($project['ssh_url_to_repo'], ':', true);
                 $url .= ':'.PORT.'/'.$project['path_with_namespace'];
             }
