@@ -143,7 +143,7 @@ function load_data($project, $repos)
         mkdir(dirname($file), 0777, true);
     }
 
-    if (file_exists($file) && filemtime($file) >= $mtime) {
+    if (file_exists($file) && filemtime($file) >= ($mtime + (15*60)) || !isset($_GET['force'])) {
         if (filesize($file) > 0) {
             return json_decode(file_get_contents($file));
         } else {
