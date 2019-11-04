@@ -15,8 +15,11 @@ if (!file_exists($config_file)) {
     die('confs/gitlab.ini missing');
 }
 $confs = parse_ini_file($config_file);
-
-define('PORT', $confs['port']);
+if (isset($confs['port'])) {
+    define('PORT', $confs['port']);
+} else {
+    define('PORT', '22');
+}
 
 $validMethods = ['ssh', 'http'];
 if (isset($confs['method']) && in_array($confs['method'], $validMethods)) {
@@ -33,9 +36,9 @@ define('HiDE_PROJECTS', !empty($confs['hide_projects']));
 $client = Client::create($confs['endpoint']);
 $client->authenticate($confs['api_key'], Client::AUTH_URL_TOKEN);
 
-$groups = $client->api('groups');
-$projects = $client->api('projects');
-$repos = $client->api('repositories');
+$groups = $client->groups();
+$projects = $client->projects();
+$repos = $client->repositories();
 
 clear_cache_on_config_change($cache_folder, $config_file, $packages_file);
 
@@ -60,6 +63,10 @@ if (!empty($confs['groups'])) {
     $me = $client->api('users')->me();
     for ($page = 1; count($p = $projects->all(['page' => $page, 'per_page' => 100])); $page++) {
         foreach ($p as $project) {
+            // last_activity_at is not accurate https://gitlab.com/gitlab-org/gitlab/issues/20952
+            $commit = $repos->commits($project['id'], ['per_page' => 1])[0]; // get last commit
+            $project['last_activity_at'] = $commit['created_at']; // overwrite last_activity_at
+
             $all_projects[] = $project;
             $mtime = max($mtime, strtotime($project['last_activity_at']));
         }
