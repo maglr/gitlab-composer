@@ -18,7 +18,7 @@ $confs = parse_ini_file($config_file);
 if (isset($confs['port'])) {
     define('PORT', $confs['port']);
 } else {
-    define('PORT', '22');
+    define('PORT', '');
 }
 
 $validMethods = ['ssh', 'http'];
